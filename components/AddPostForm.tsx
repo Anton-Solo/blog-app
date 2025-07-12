@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,6 +75,7 @@ export default function AddPostForm() {
       router.push('/');
     } catch (e) {
       toast.error('Error creating post');
+      console.error(e)
     }
   };
 

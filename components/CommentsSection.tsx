@@ -1,7 +1,7 @@
 "use client";
 
 import { useSelector } from 'react-redux';
-import { Comment, RootState } from '@/types';
+import {  RootState } from '@/types';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { toast } from 'sonner';

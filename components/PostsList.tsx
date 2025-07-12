@@ -6,7 +6,6 @@ import { useGetPostsQuery } from '@/slices/postsApi';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
 import { categories } from '@/constants';
 import PostCard from './PostCard';
-import { Skeleton } from './ui/skeleton';
 
 const cats = [
   { value: 'all', label: 'All categories' },
