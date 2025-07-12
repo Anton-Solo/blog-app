@@ -21,6 +21,8 @@ const convertTimestamp = (timestamp: Timestamp) => {
   return timestamp.toDate().toISOString();
 };
 
+type RTKQueryError = { status: string; error: string };
+
 export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fakeBaseQuery(),
@@ -48,10 +50,18 @@ export const postsApi = createApi({
             updatedAt: convertTimestamp(doc.data().updatedAt),
           })) as Post[];
           const hasMore = querySnapshot.docs.length === postsPerPage;
-          // Не повертаємо lastDoc у data
           return { data: { posts, hasMore } };
-        } catch (error: any) {
-          return { error: { status: 'CUSTOM_ERROR', error: error.message } };
+        } catch (error: unknown) {
+          let message = 'Unknown error';
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'message' in error &&
+            typeof (error as { message?: string }).message === 'string'
+          ) {
+            message = (error as { message: string }).message;
+          }
+          return { error: { status: 'CUSTOM_ERROR', error: message } as RTKQueryError };
         }
       },
       providesTags: (result) => [{ type: 'Posts', id: 'LIST' }],
@@ -74,8 +84,17 @@ export const postsApi = createApi({
                 updatedAt: now.toDate().toISOString(),
               } as Post,
             };
-          } catch (error: any) {
-            return { error: { status: 'CUSTOM_ERROR', error: error.message } };
+          } catch (error: unknown) {
+            let message = 'Unknown error';
+            if (
+              typeof error === 'object' &&
+              error !== null &&
+              'message' in error &&
+              typeof (error as { message?: string }).message === 'string'
+            ) {
+              message = (error as { message: string }).message;
+            }
+            return { error: { status: 'CUSTOM_ERROR', error: message } as RTKQueryError };
           }
         },
         invalidatesTags: [{ type: 'Posts', id: 'LIST' }],
@@ -90,8 +109,17 @@ export const postsApi = createApi({
             updatedAt: Timestamp.now(),
           });
           return { data: { id, ...updates } as Post };
-        } catch (error: any) {
-          return { error: { status: 'CUSTOM_ERROR', error: error.message } };
+        } catch (error: unknown) {
+          let message = 'Unknown error';
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'message' in error &&
+            typeof (error as { message?: string }).message === 'string'
+          ) {
+            message = (error as { message: string }).message;
+          }
+          return { error: { status: 'CUSTOM_ERROR', error: message } as RTKQueryError };
         }
       },
       invalidatesTags: (result, error, { id }) => [
@@ -105,8 +133,17 @@ export const postsApi = createApi({
           const postRef = doc(db, 'posts', id);
           await deleteDoc(postRef);
           return { data: id };
-        } catch (error: any) {
-          return { error: { status: 'CUSTOM_ERROR', error: error.message } };
+        } catch (error: unknown) {
+          let message = 'Unknown error';
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'message' in error &&
+            typeof (error as { message?: string }).message === 'string'
+          ) {
+            message = (error as { message: string }).message;
+          }
+          return { error: { status: 'CUSTOM_ERROR', error: message } as RTKQueryError };
         }
       },
       invalidatesTags: [{ type: 'Posts', id: 'LIST' }],

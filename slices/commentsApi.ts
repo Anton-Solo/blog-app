@@ -11,9 +11,7 @@ import {
 import { db } from '@/lib/firebase';
 import { Comment } from '../types';
 
-const convertTimestamp = (timestamp: Timestamp) => {
-  return timestamp.toDate().toISOString();
-};
+type RTKQueryError = { status: string; error: string };
 
 export const commentsApi = createApi({
   reducerPath: 'commentsApi',
@@ -43,9 +41,18 @@ export const commentsApi = createApi({
             } as Comment;
           });
           return { data: comments };
-        } catch (error: any) {
-          console.error('Firestore error:', error);
-          return { error: { status: 'CUSTOM_ERROR', error: error.message } };
+        } catch (error: unknown) {
+          let message = 'Unknown error';
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'message' in error &&
+            typeof (error as { message?: string }).message === 'string'
+          ) {
+            message = (error as { message: string }).message;
+          }
+          console.error('Firestore error:', message);
+          return { error: { status: 'CUSTOM_ERROR', error: message } as RTKQueryError };
         }
       },
       providesTags: (result, error, postId) => [{ type: 'Comments', id: postId }],
@@ -64,8 +71,17 @@ export const commentsApi = createApi({
               createdAt: Timestamp.now().toDate().toISOString(),
             } as Comment,
           };
-        } catch (error: any) {
-          return { error: { status: 'CUSTOM_ERROR', error: error.message } };
+        } catch (error: unknown) {
+          let message = 'Unknown error';
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'message' in error &&
+            typeof (error as { message?: string }).message === 'string'
+          ) {
+            message = (error as { message: string }).message;
+          }
+          return { error: { status: 'CUSTOM_ERROR', error: message } as RTKQueryError };
         }
       },
       invalidatesTags: (result, error, comment) => [{ type: 'Comments', id: comment.postId }],

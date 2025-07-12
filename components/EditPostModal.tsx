@@ -27,6 +27,8 @@ const editPostSchema = z.object({
 
 type EditPostFormValues = z.infer<typeof editPostSchema>;
 
+type RTKQueryError = { status: string; error: string };
+
 function EditPostModal({ post, isOpen, onClose }: Omit<EditPostModalProps, 'onSave' | 'isSaving'>) {
   const [updatePost, { isLoading }] = useUpdatePostMutation();
   const router = useRouter();
@@ -59,8 +61,18 @@ function EditPostModal({ post, isOpen, onClose }: Omit<EditPostModalProps, 'onSa
       toast.success("Post updated!");
       router.refresh();
       onClose();
-    } catch (error: any) {
-      toast.error(error?.data?.error || "Failed to update post");
+    } catch (error: unknown) {
+      let message = "Failed to update post";
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "error" in error &&
+        typeof (error as RTKQueryError).error === "string"
+      ) {
+        message = (error as RTKQueryError).error;
+      }
+      toast.error(message);
     }
   };
 

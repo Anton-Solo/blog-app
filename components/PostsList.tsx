@@ -37,7 +37,7 @@ export default function PostsList() {
   }
 
   if (isError) {
-    return <div className="text-red-500 text-center py-8">Error: {String((error as any)?.error || 'Failed to fetch posts')}</div>;
+    return <div className="text-red-500 text-center py-8">Error: Failed to fetch posts</div>;
   }
 
   return (
