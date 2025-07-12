@@ -14,7 +14,7 @@ const cats = [
 
 export default function PostsList() {
   const postsPerPage = 6;
-  const { data, isLoading, isError, error } = useGetPostsQuery({ postsPerPage });
+  const { data, isLoading, isError } = useGetPostsQuery({ postsPerPage });
   const posts = data?.posts || [];
 
   const [selectedCategory, setSelectedCategory] = useState('all');
